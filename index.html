@@ -1,0 +1,1211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bhutan SafeSchools Portal | Sherig Safety Network</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        bhutan: {
+                            gold: '#F4A900',
+                            orange: '#FF4E00',
+                            burgundy: '#6B1D2F',
+                            maroon: '#4A121A',
+                            yellow: '#FFC72C',
+                            dark: '#1C1618',
+                            surface: '#FAF7F2'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Traditional Bhutanese Pattern Accent Style */
+        .bhutan-pattern {
+            background-color: #6B1D2F;
+            background-image: radial-gradient(#F4A900 0.75px, transparent 0.75px), radial-gradient(#FF4E00 0.75px, #6B1D2F 0.75px);
+            background-size: 30px 30px;
+            background-position: 0 0, 15px 15px;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #FAF7F2;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #6B1D2F;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body class="bg-bhutan-surface text-bhutan-dark font-sans min-h-screen flex flex-col antialiased selection:bg-bhutan-gold selection:text-bhutan-maroon custom-scrollbar">
+
+    <div class="h-2.5 bg-gradient-to-r from-bhutan-burgundy via-bhutan-orange to-bhutan-gold w-full"></div>
+
+    <header class="bg-white border-b border-amber-900/10 shadow-sm sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <!-- Brand Identity -->
+            <div class="flex items-center space-x-3 cursor-pointer" onclick="switchTab('dashboard')">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-bhutan-gold to-bhutan-orange flex items-center justify-center text-white shadow-md shadow-orange-500/20 border border-amber-300">
+                    <i class="fa-solid font-bold text-2xl">⚡</i>
+                </div>
+                <div>
+                    <span class="text-xs tracking-wider uppercase text-bhutan-burgundy font-extrabold block">Ministry of Education & Skills Development</span>
+                    <h1 class="text-xl sm:text-2xl font-extrabold text-bhutan-maroon leading-tight flex items-center gap-2">
+                        Sherig Safety Network
+                        <span class="text-xs bg-amber-100 text-bhutan-burgundy font-semibold px-2 py-0.5 rounded-full border border-amber-300">Bhutan</span>
+                    </h1>
+                </div>
+            </div>
+
+            <nav class="hidden md:flex items-center space-x-1 sm:space-x-2">
+                <button onclick="switchTab('dashboard')" id="nav-dashboard" class="nav-btn px-4 py-2 rounded-lg text-sm font-bold transition-all text-bhutan-maroon bg-amber-100">
+                    <i class="fa-solid fa-house mr-1.5"></i> Home
+                </button>
+                <button onclick="switchTab('report')" id="nav-report" class="nav-btn px-4 py-2 rounded-lg text-sm font-medium transition-all text-bhutan-burgundy hover:bg-amber-50">
+                    <i class="fa-solid fa-paper-plane mr-1.5"></i> Report Incident
+                </button>
+                <button onclick="switchTab('awareness')" id="nav-awareness" class="nav-btn px-4 py-2 rounded-lg text-sm font-medium transition-all text-bhutan-burgundy hover:bg-amber-50">
+                    <i class="fa-solid fa-shield-halved mr-1.5"></i> Safety Guide
+                </button>
+                <button onclick="switchTab('admin')" id="nav-admin" class="nav-btn px-4 py-2 rounded-lg text-sm font-medium transition-all text-bhutan-burgundy hover:bg-amber-50 border border-dashed border-amber-300 bg-amber-50/50">
+                    <i class="fa-solid fa-user-shield mr-1.5 text-bhutan-orange"></i> Principal Portal
+                </button>
+            </nav>
+
+            <div class="flex items-center space-x-3">
+                <div id="userStatusArea" class="hidden md:hidden items-center space-x-2 bg-amber-50 px-3 py-1.5 rounded-lg border border-amber-200">
+                    <i class="fa-solid fa-circle-user text-bhutan-burgundy text-lg"></i>
+                    <span id="currentUserDisplay" class="text-xs font-semibold text-bhutan-maroon">Guest Student</span>
+                    <button onclick="logoutUser()" class="text-xs text-red-600 hover:underline ml-2 font-bold">Logout</button>
+                </div>
+                <button id="authBtn" onclick="openAuthModal()" class="bg-bhutan-burgundy hover:bg-bhutan-maroon text-white text-sm font-semibold px-4 py-2.5 rounded-lg shadow-sm transition duration-200 flex items-center gap-2 border border-amber-600">
+                    <i class="fa-solid fa-right-to-bracket"></i> Student Login
+                </button>
+            </div>
+        </div>
+
+        <div class="md:hidden flex items-center justify-around bg-amber-50/80 border-t border-amber-200/60 py-2 px-2 text-xs font-medium">
+            <button onclick="switchTab('dashboard')" id="mobile-nav-dashboard" class="flex flex-col items-center font-bold text-bhutan-orange bg-amber-200/50 py-1 px-3 rounded-lg transition-all">
+                <i class="fa-solid fa-house text-base mb-0.5"></i> Home
+            </button>
+            <button onclick="switchTab('report')" id="mobile-nav-report" class="flex flex-col items-center text-bhutan-burgundy py-1 px-3 rounded-lg transition-all">
+                <i class="fa-solid fa-paper-plane text-base mb-0.5"></i> Report
+            </button>
+            <button onclick="switchTab('awareness')" id="mobile-nav-awareness" class="flex flex-col items-center text-bhutan-burgundy py-1 px-3 rounded-lg transition-all">
+                <i class="fa-solid fa-shield-halved text-base mb-0.5"></i> Guide
+            </button>
+            <button onclick="switchTab('admin')" id="mobile-nav-admin" class="flex flex-col items-center text-bhutan-burgundy py-1 px-3 rounded-lg transition-all">
+                <i class="fa-solid fa-user-shield text-base mb-0.5"></i> Principal
+            </button>
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+        <!-- VIEW 1: DASHBOARD / HOME -->
+        <section id="view-dashboard" class="space-y-8">
+            
+            <div class="relative bg-gradient-to-r from-bhutan-burgundy via-bhutan-maroon to-bhutan-dark text-white rounded-2xl overflow-hidden shadow-xl border border-amber-500/20">
+                <div class="absolute inset-0 opacity-10 bhutan-pattern"></div>
+                <div class="relative z-10 p-6 sm:p-10 lg:p-12 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                    <div class="lg:col-span-7 space-y-4">
+                        <div class="inline-flex items-center gap-2 bg-bhutan-gold/20 border border-bhutan-gold/40 text-bhutan-gold text-xs font-bold px-3 py-1 rounded-full uppercase tracking-widest">
+                            <i class="fa-solid fa-shield-heart"></i> Safe Schools Bhutan Initiative
+                        </div>
+                        <h2 class="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight leading-tight">
+                            Every Bhutanese Student Deserves a <span class="text-bhutan-gold">Safe Environment</span>
+                        </h2>
+                        <p class="text-amber-100/90 text-sm sm:text-base max-w-xl font-normal leading-relaxed">
+                            Report bullying or cyberbullying safely and directly to your Principal at <strong>Bjishong CS, Gasa</strong> or any Bhutanese school. Reports are synced live to the authority ledger. Anonymous options available.
+                        </p>
+                        <div class="pt-2 flex flex-wrap gap-3">
+                            <button onclick="switchTab('report')" class="bg-gradient-to-r from-bhutan-gold to-bhutan-orange text-bhutan-dark font-extrabold px-6 py-3.5 rounded-xl shadow-lg hover:brightness-110 transition flex items-center gap-2 text-sm">
+                                <i class="fa-solid fa-triangle-exclamation"></i> File Direct Complaint Now
+                            </button>
+                            <button onclick="switchTab('awareness')" class="bg-white/10 hover:bg-white/20 text-white border border-white/20 font-semibold px-5 py-3.5 rounded-xl backdrop-blur-sm transition text-sm">
+                                <i class="fa-solid fa-circle-info"></i> Rights & Helplines
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- SVG Illustration: Bhutanese School Architecture -->
+                    <div class="lg:col-span-5 flex justify-center">
+                        <div class="w-full max-w-sm bg-white/5 border border-white/10 rounded-2xl p-4 backdrop-blur-md shadow-2xl">
+                            <svg viewBox="0 0 400 300" class="w-full h-auto rounded-xl">
+                                <defs>
+                                    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+                                        <stop offset="0%" stop-color="#FF4E00"/>
+                                        <stop offset="100%" stop-color="#6B1D2F"/>
+                                    </linearGradient>
+                                    <linearGradient id="goldGrad" x1="0" y1="0" x2="1" y2="1">
+                                        <stop offset="0%" stop-color="#FFC72C"/>
+                                        <stop offset="100%" stop-color="#F4A900"/>
+                                    </linearGradient>
+                                </defs>
+                                <rect width="400" height="300" fill="url(#sky)"/>
+                                <path d="M0,220 L70,140 L150,200 L240,110 L330,190 L400,130 L400,300 L0,300 Z" fill="#4A121A" opacity="0.6"/>
+                                <path d="M0,240 L100,180 L190,230 L300,160 L400,220 L400,300 L0,300 Z" fill="#2D0B10"/>
+                                <polygon points="120,180 200,120 280,180" fill="url(#goldGrad)"/>
+                                <rect x="135" y="180" width="130" height="70" fill="#FAF7F2"/>
+                                <rect x="150" y="195" width="25" height="35" fill="#6B1D2F" rx="3"/>
+                                <rect x="187" y="195" width="25" height="35" fill="#6B1D2F" rx="3"/>
+                                <rect x="225" y="195" width="25" height="35" fill="#6B1D2F" rx="3"/>
+                                <polygon points="100,185 200,110 300,185" fill="none" stroke="#F4A900" stroke-width="4"/>
+                                <circle cx="200" cy="90" r="12" fill="#FFC72C"/>
+                                <circle cx="200" cy="200" r="45" fill="#6B1D2F" stroke="#F4A900" stroke-width="3"/>
+                                <path d="M185,190 L200,180 L215,190 L215,205 C215,215 200,225 200,225 C200,225 185,215 185,205 Z" fill="#F4A900"/>
+                                <path d="M195,198 L198,202 L206,194" stroke="#6B1D2F" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+                            </svg>
+                            <div class="text-center mt-3">
+                                <span class="text-xs font-semibold text-amber-200">Gross National Happiness in Education</span>
+                                <p class="text-[11px] text-amber-100/70">Connected to Bjishong CS & Dzongkhag Education Offices</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+                <div onclick="switchTab('report')" class="bg-white p-6 rounded-2xl border border-amber-200 shadow-sm hover:shadow-md transition cursor-pointer group hover:border-bhutan-gold">
+                    <div class="w-12 h-12 rounded-xl bg-orange-100 text-bhutan-orange flex items-center justify-center text-xl font-bold mb-4 group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-bullhorn"></i>
+                    </div>
+                    <h3 class="font-bold text-bhutan-maroon text-lg group-hover:text-bhutan-orange transition">Report Bullying</h3>
+                    <p class="text-xs text-gray-600 mt-1">Submit official incident reports directly to your school principal.</p>
+                </div>
+
+                <div onclick="openCyberSafetyModal()" class="bg-white p-6 rounded-2xl border border-amber-200 shadow-sm hover:shadow-md transition cursor-pointer group hover:border-bhutan-gold">
+                    <div class="w-12 h-12 rounded-xl bg-amber-100 text-bhutan-burgundy flex items-center justify-center text-xl font-bold mb-4 group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-laptop-code"></i>
+                    </div>
+                    <h3 class="font-bold text-bhutan-maroon text-lg group-hover:text-bhutan-burgundy transition">Cyberbullying Help</h3>
+                    <p class="text-xs text-gray-600 mt-1">Safety precautions & guide for WeChat, Facebook, TikTok & social media.</p>
+                </div>
+
+                <div onclick="switchTab('awareness')" class="bg-white p-6 rounded-2xl border border-amber-200 shadow-sm hover:shadow-md transition cursor-pointer group hover:border-bhutan-gold">
+                    <div class="w-12 h-12 rounded-xl bg-yellow-100 text-amber-800 flex items-center justify-center text-xl font-bold mb-4 group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-phone-volume"></i>
+                    </div>
+                    <h3 class="font-bold text-bhutan-maroon text-lg group-hover:text-amber-800 transition">Bhutan Helplines</h3>
+                    <p class="text-xs text-gray-600 mt-1">Free 24/7 child line (1098), mental health (112), and emergency numbers.</p>
+                </div>
+
+                <div onclick="switchTab('admin')" class="bg-white p-6 rounded-2xl border border-amber-200 shadow-sm hover:shadow-md transition cursor-pointer group hover:border-bhutan-gold">
+                    <div class="w-12 h-12 rounded-xl bg-rose-100 text-rose-800 flex items-center justify-center text-xl font-bold mb-4 group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-lock"></i>
+                    </div>
+                    <h3 class="font-bold text-bhutan-maroon text-lg group-hover:text-rose-800 transition">Principal Desk</h3>
+                    <p class="text-xs text-gray-600 mt-1">Secured login portal exclusively for School Principals & Headmasters.</p>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl border border-amber-200 p-6 shadow-sm">
+                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6 border-b border-gray-100 pb-4">
+                    <div>
+                        <h3 class="text-xl font-bold text-bhutan-maroon flex items-center gap-2">
+                            <i class="fa-solid fa-list-check text-bhutan-orange"></i> Complaint Tracker & Status
+                        </h3>
+                        <p class="text-xs text-gray-500">Live status of complaints submitted to the School Principal</p>
+                    </div>
+                    <button onclick="switchTab('report')" class="text-xs bg-bhutan-burgundy text-white px-4 py-2 rounded-lg font-bold hover:bg-bhutan-maroon transition">
+                        + New Complaint
+                    </button>
+                </div>
+
+                <div id="studentTrackList" class="space-y-3">
+                    <!-- Dynamic Insertion via JavaScript -->
+                </div>
+            </div>
+        </section>
+
+        <!-- VIEW 2: REPORT COMPLAINT FORM -->
+        <section id="view-report" class="hidden max-w-4xl mx-auto space-y-6">
+            <div class="bg-white rounded-2xl border border-amber-200 p-6 sm:p-10 shadow-lg">
+                <div class="border-b border-amber-100 pb-5 mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div>
+                        <span class="text-xs font-bold text-bhutan-orange uppercase tracking-wider">Official Grievance Redressal</span>
+                        <h2 class="text-2xl sm:text-3xl font-extrabold text-bhutan-maroon mt-1">Direct Complaint Form</h2>
+                        <p class="text-xs sm:text-sm text-gray-600 mt-1">
+                            Your complaint will be transmitted directly to the Principal and school counselor.
+                        </p>
+                    </div>
+                </div>
+
+                <form id="complaintForm" onsubmit="handleComplaintSubmit(event)" class="space-y-6">
+                    
+                    <div class="bg-amber-50 rounded-xl p-4 border border-amber-300/60 flex items-center justify-between">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 rounded-full bg-bhutan-burgundy text-white flex items-center justify-center font-bold">
+                                <i class="fa-solid fa-user-secret"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-sm font-bold text-bhutan-maroon">100% Anonymous Mode</h4>
+                                <p class="text-xs text-gray-600">Conceal your personal identity in the official report log.</p>
+                            </div>
+                        </div>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" id="isAnonymous" onchange="toggleAnonymousMode(this)" class="sr-only peer">
+                            <div class="w-11 h-6 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-bhutan-burgundy"></div>
+                        </label>
+                    </div>
+
+                    <div id="studentDetailFields" class="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-gray-50/80 p-4 rounded-xl border border-gray-200">
+                        <div>
+                            <label class="block text-xs font-bold text-bhutan-maroon mb-1">Student Full Name *</label>
+                            <input type="text" id="reportStudentName" required placeholder="e.g., Karma Dema" class="w-full px-3.5 py-2.5 rounded-lg border border-gray-300 text-sm focus:ring-2 focus:ring-bhutan-burgundy focus:outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-bhutan-maroon mb-1">Student ID / Grade / Section *</label>
+                            <input type="text" id="reportStudentCode" required placeholder="e.g., BCS-9A-018" class="w-full px-3.5 py-2.5 rounded-lg border border-gray-300 text-sm focus:ring-2 focus:ring-bhutan-burgundy focus:outline-none">
+                        </div>
+                    </div>
+
+                    <!-- School Selection (Bjishong CS Highlighted First) -->
+                    <div>
+                        <label class="block text-xs font-bold text-bhutan-maroon mb-1">Select School Name *</label>
+                        <select id="reportSchool" required class="w-full px-3.5 py-2.5 rounded-lg border border-gray-300 text-sm focus:ring-2 focus:ring-bhutan-burgundy focus:outline-none bg-white font-semibold text-bhutan-maroon">
+                            <option value="Bjishong Central School, Gasa" selected>🏫 Bjishong Central School (Bjishong CS), Gasa</option>
+                            <option value="Motithang Higher Secondary School">Motithang Higher Secondary School (Thimphu)</option>
+                            <option value="Yangchenphug HSS">Yangchenphug HSS (Thimphu)</option>
+                            <option value="Drugyel Higher Secondary School">Drugyel Higher Secondary School (Paro)</option>
+                            <option value="Punakha Higher Secondary School">Punakha HSS (Punakha)</option>
+                            <option value="Paro College Practice School">Paro College Demonstration School (Paro)</option>
+                            <option value="Gelephu Higher Secondary School">Gelephu HSS (Sarpang)</option>
+                            <option value="Jakar Higher Secondary School">Jakar HSS (Bumthang)</option>
+                            <option value="Other Bhutanese School">Other Bhutanese School (Specify in description)</option>
+                        </select>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold text-bhutan-maroon mb-1">Bullying Category *</label>
+                            <select id="reportCategory" required class="w-full px-3.5 py-2.5 rounded-lg border border-gray-300 text-sm focus:ring-2 focus:ring-bhutan-burgundy focus:outline-none bg-white">
+                                <option value="Cyberbullying">Cyberbullying (WeChat, Facebook, TikTok, Online harassment)</option>
+                                <option value="Physical Bullying">Physical Bullying (Hitting, Pushing, Damaging belongings)</option>
+                                <option value="Verbal Bullying">Verbal Bullying (Name-calling, Threats, Insults)</option>
+                                <option value="Social Bullying">Social / Relational (Exclusion, Spreading Rumors)</option>
+                                <option value="Extortion/Intimidation">Extortion / Money or Item Demands</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-bhutan-maroon mb-1">Urgency Level *</label>
+                            <select id="reportSeverity" required class="w-full px-3.5 py-2.5 rounded-lg border border-gray-300 text-sm focus:ring-2 focus:ring-bhutan-burgundy focus:outline-none bg-white">
+                                <option value="Low">Low - Repeated minor teasing</option>
+                                <option value="Medium" selected>Medium - Regular harassment</option>
+                                <option value="High">High - Severe threats or physical harm</option>
+                                <option value="Urgent Emergency">URGENT - Immediate Safety Danger</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-bhutan-maroon mb-1">Route Complaint To *</label>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                            <label class="flex items-center space-x-2 p-3 rounded-lg border border-gray-200 cursor-pointer hover:bg-amber-50">
+                                <input type="radio" name="recipient" value="School Principal" checked class="text-bhutan-burgundy focus:ring-bhutan-burgundy">
+                                <span class="text-xs font-semibold text-gray-700">School Principal</span>
+                            </label>
+                            <label class="flex items-center space-x-2 p-3 rounded-lg border border-gray-200 cursor-pointer hover:bg-amber-50">
+                                <input type="radio" name="recipient" value="School Counselor" class="text-bhutan-burgundy focus:ring-bhutan-burgundy">
+                                <span class="text-xs font-semibold text-gray-700">School Counselor</span>
+                            </label>
+                            <label class="flex items-center space-x-2 p-3 rounded-lg border border-gray-200 cursor-pointer hover:bg-amber-50">
+                                <input type="radio" name="recipient" value="Principal & MoESD" class="text-bhutan-burgundy focus:ring-bhutan-burgundy">
+                                <span class="text-xs font-semibold text-gray-700">Principal & MoESD</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-bhutan-maroon mb-1">Incident Date *</label>
+                        <input type="date" id="reportDate" required class="w-full px-3.5 py-2.5 rounded-lg border border-gray-300 text-sm focus:ring-2 focus:ring-bhutan-burgundy focus:outline-none bg-white mb-4">
+
+                        <label class="block text-xs font-bold text-bhutan-maroon mb-1">Detailed Description of Incident *</label>
+                        <textarea id="reportDescription" rows="4" required placeholder="Describe what happened, where it occurred (e.g. hostel, classroom, WeChat group), and names of persons involved if comfortable..." class="w-full px-3.5 py-2.5 rounded-lg border border-gray-300 text-sm focus:ring-2 focus:ring-bhutan-burgundy focus:outline-none"></textarea>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-bhutan-maroon mb-1">Evidence / Screenshot Notes (Optional)</label>
+                        <input type="text" id="reportEvidence" placeholder="e.g. Screenshots saved on phone / WeChat chat log exported" class="w-full px-3.5 py-2.5 rounded-lg border border-gray-300 text-sm focus:ring-2 focus:ring-bhutan-burgundy focus:outline-none">
+                    </div>
+
+                    <div class="pt-2">
+                        <button type="submit" id="submitBtn" class="w-full bg-gradient-to-r from-bhutan-burgundy to-bhutan-maroon hover:opacity-95 text-white font-bold py-3.5 rounded-xl shadow-lg transition duration-200 flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-paper-plane" id="submitIcon"></i> 
+                            <span id="submitBtnText">Submit Complaint to Principal</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <!-- VIEW 3: AWARENESS & EDUCATION -->
+        <section id="view-awareness" class="hidden space-y-8">
+            <div class="bg-amber-50 border border-amber-200 rounded-2xl p-6 sm:p-8">
+                <div class="max-w-3xl">
+                    <span class="text-xs font-bold text-bhutan-orange uppercase tracking-widest">Sherig Safety Education</span>
+                    <h2 class="text-2xl sm:text-3xl font-extrabold text-bhutan-maroon mt-1">Anti-Bullying Guidelines for Bhutanese Schools</h2>
+                    <p class="text-xs sm:text-sm text-gray-700 mt-2 leading-relaxed">
+                        In accordance with Ministry guidelines and the <strong>Child Care and Protection Act of Bhutan</strong>, all educational institutions including <strong>Bjishong CS (Gasa)</strong> maintain zero-tolerance policies toward bullying and online cyber-harassment.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Difference Cards Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="bg-white rounded-2xl border border-amber-200 p-6 shadow-sm hover:shadow-md transition">
+                    <div class="w-12 h-12 rounded-xl bg-amber-100 text-bhutan-burgundy flex items-center justify-center text-xl mb-4">
+                        <i class="fa-solid fa-school-flag"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-bhutan-maroon mb-2">School & Hostel Bullying</h3>
+                    <p class="text-xs text-gray-600 mb-4 leading-relaxed">
+                        Physical or verbal intimidation taking place on school grounds, dormitories, dining halls, or sports fields.
+                    </p>
+                    <ul class="space-y-2 text-xs text-gray-700">
+                        <li class="flex items-start gap-2"><i class="fa-solid fa-circle-check text-green-600 mt-0.5"></i> <strong>Physical:</strong> Pushing, tripping, hitting, or damaging uniform/textbooks.</li>
+                        <li class="flex items-start gap-2"><i class="fa-solid fa-circle-check text-green-600 mt-0.5"></i> <strong>Verbal:</strong> Insulting nicknames, mockings, or extortion of pocket money.</li>
+                        <li class="flex items-start gap-2"><i class="fa-solid fa-circle-check text-green-600 mt-0.5"></i> <strong>Hostel:</strong> Intimidation of junior students in boarding houses.</li>
+                    </ul>
+                </div>
+
+                <div class="bg-white rounded-2xl border border-amber-200 p-6 shadow-sm hover:shadow-md transition">
+                    <div class="w-12 h-12 rounded-xl bg-orange-100 text-bhutan-orange flex items-center justify-center text-xl mb-4">
+                        <i class="fa-solid fa-mobile-screen-button"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-bhutan-maroon mb-2">Cyberbullying Online</h3>
+                    <p class="text-xs text-gray-600 mb-4 leading-relaxed">
+                        Digital harassment on WeChat groups, Facebook pages, Instagram, TikTok, or online gaming channels.
+                    </p>
+                    <ul class="space-y-2 text-xs text-gray-700">
+                        <li class="flex items-start gap-2"><i class="fa-solid fa-circle-check text-amber-600 mt-0.5"></i> <strong>Group Chat Abuse:</strong> Sharing humiliating photos or fake rumors in class chats.</li>
+                        <li class="flex items-start gap-2"><i class="fa-solid fa-circle-check text-amber-600 mt-0.5"></i> <strong>Fake Profiles:</strong> Creating fake accounts to impersonate or bully classmates.</li>
+                        <li class="flex items-start gap-2"><i class="fa-solid fa-circle-check text-amber-600 mt-0.5"></i> <strong>Online Threats:</strong> Sending threatening messages or blackmailing.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="bg-gradient-to-r from-bhutan-burgundy to-bhutan-maroon text-white rounded-2xl p-6 sm:p-8 shadow-md">
+                <h3 class="text-xl font-bold mb-4 flex items-center gap-2">
+                    <i class="fa-solid fa-phone-volume text-bhutan-gold"></i> Emergency Contacts & Helplines
+                </h3>
+                <div class="grid grid-cols-1 sm:grid-cols-4 gap-4">
+                    <div class="bg-white/10 p-4 rounded-xl border border-white/10 backdrop-blur-sm">
+                        <span class="text-xs text-amber-200 block uppercase font-bold">Child Helpline</span>
+                        <span class="text-2xl font-black text-white">1098</span>
+                        <p class="text-[11px] text-amber-100/80 mt-1">National child protection hotline.</p>
+                    </div>
+                    <div class="bg-white/10 p-4 rounded-xl border border-white/10 backdrop-blur-sm">
+                        <span class="text-xs text-amber-200 block uppercase font-bold">Mental Health</span>
+                        <span class="text-2xl font-black text-white">112</span>
+                        <p class="text-[11px] text-amber-100/80 mt-1">Tele-counseling support.</p>
+                    </div>
+                    <div class="bg-white/10 p-4 rounded-xl border border-white/10 backdrop-blur-sm">
+                        <span class="text-xs text-amber-200 block uppercase font-bold">Police Hotline</span>
+                        <span class="text-2xl font-black text-white">113</span>
+                        <p class="text-[11px] text-amber-100/80 mt-1">Royal Bhutan Police.</p>
+                    </div>
+                    <div class="bg-white/10 p-4 rounded-xl border border-white/10 backdrop-blur-sm">
+                        <span class="text-xs text-amber-200 block uppercase font-bold">NCWC Hotline</span>
+                        <span class="text-2xl font-black text-white">1098</span>
+                        <p class="text-[11px] text-amber-100/80 mt-1">Women & Children protection.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- VIEW 4: SECURED PRINCIPAL PORTAL ONLY (PIN PROTECTED) -->
+        <section id="view-admin" class="hidden space-y-6">
+            <div id="principalLockScreen" class="bg-white rounded-2xl border border-amber-200 p-8 sm:p-12 shadow-xl text-center max-w-md mx-auto">
+                <div class="w-16 h-16 bg-amber-100 text-bhutan-burgundy rounded-full flex items-center justify-center text-3xl mx-auto mb-4 border border-amber-300">
+                    <i class="fa-solid fa-lock"></i>
+                </div>
+                <h3 class="text-2xl font-black text-bhutan-maroon">Principal Access Only</h3>
+                <p class="text-xs text-gray-600 mt-2">
+                    This portal is strictly restricted for School Principals, Headmasters, and MoESD Officers.
+                </p>
+
+                <form onsubmit="unlockPrincipalPortal(event)" class="mt-6 space-y-4">
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 mb-1">Enter Authority Passcode *</label>
+                        <input type="password" id="principalPinInput" placeholder="Enter PIN (Default: 1234)" required class="w-full px-4 py-3 rounded-xl border border-gray-300 text-center font-mono text-lg tracking-widest focus:ring-2 focus:ring-bhutan-burgundy focus:outline-none">
+                    </div>
+                    <div id="pinError" class="text-xs font-bold text-red-600 hidden">
+                        <i class="fa-solid fa-triangle-exclamation"></i> Invalid Passcode! Please try again.
+                    </div>
+                    <button type="submit" class="w-full bg-bhutan-burgundy hover:bg-bhutan-maroon text-white font-bold py-3 rounded-xl text-sm shadow transition">
+                        <i class="fa-solid fa-key mr-1"></i> Unlock Principal Dashboard
+                    </button>
+                    <p class="text-[11px] text-gray-400">Demo Passcode is <span class="font-mono font-bold text-bhutan-maroon">1234</span></p>
+                </form>
+            </div>
+
+            <div id="principalContentArea" class="hidden bg-white rounded-2xl border border-amber-200 p-6 shadow-md">
+                <div class="flex flex-col md:flex-row md:items-center justify-between border-b border-gray-100 pb-5 gap-4">
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <span class="inline-flex items-center gap-1.5 bg-green-100 text-green-800 text-xs font-bold px-2.5 py-0.5 rounded-full">
+                                <i class="fa-solid fa-shield-check"></i> Authenticated Principal
+                            </span>
+                            <span class="text-xs text-gray-500 font-mono">Bjishong CS & MoESD Desk</span>
+                        </div>
+                        <h2 class="text-2xl font-extrabold text-bhutan-maroon mt-1">School Principal Complaint Inbox</h2>
+                        <p class="text-xs text-gray-500">All submissions are recorded in your confidential authority ledger.</p>
+                    </div>
+
+                    <div class="flex items-center gap-3">
+                        <select id="adminFilter" onchange="renderAdminInbox()" class="text-xs px-3 py-2 rounded-lg border border-gray-300 bg-white font-semibold focus:outline-none">
+                            <option value="ALL">All Complaints</option>
+                            <option value="Pending">Pending Review</option>
+                            <option value="Under Investigation">Under Investigation</option>
+                            <option value="Resolved">Resolved</option>
+                        </select>
+                        <button onclick="lockPrincipalPortal()" class="text-xs bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold px-3 py-2 rounded-lg transition">
+                            <i class="fa-solid fa-lock mr-1"></i> Lock Portal
+                        </button>
+                    </div>
+                </div>
+
+                <div class="overflow-x-auto mt-4">
+                    <table class="w-full text-left border-collapse text-xs">
+                        <thead>
+                            <tr class="bg-amber-50/70 border-b border-amber-200 text-bhutan-burgundy font-extrabold uppercase tracking-wider">
+                                <th class="p-3">Reference ID</th>
+                                <th class="p-3">Student Name</th>
+                                <th class="p-3">School</th>
+                                <th class="p-3">Category</th>
+                                <th class="p-3">Severity</th>
+                                <th class="p-3">Status</th>
+                                <th class="p-3 text-right">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminTableBody" class="divide-y divide-gray-100 font-medium">
+                            <!-- Dynamic Content Inserted via JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <div id="authModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-md w-full p-6 sm:p-8 shadow-2xl border border-amber-200 relative">
+            <button onclick="closeAuthModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 text-lg">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+            <div class="flex items-center justify-center border-b border-gray-200 mb-6 pb-2">
+                <button id="tabBtnLogin" onclick="switchAuthTab('login')" class="w-1/2 text-center pb-2 font-bold text-sm text-bhutan-burgundy border-b-2 border-bhutan-burgundy">
+                    Student Login
+                </button>
+                <button id="tabBtnRegister" onclick="switchAuthTab('register')" class="w-1/2 text-center pb-2 font-bold text-sm text-gray-400 border-b-2 border-transparent">
+                    New Student Register
+                </button>
+            </div>
+
+            <form id="formLogin" onsubmit="handleLoginSubmit(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-gray-700 mb-1">Student Code / Username</label>
+                    <input type="text" id="loginId" required placeholder="e.g., BCS-9A-018 or student@school.bt" class="w-full px-3.5 py-2.5 rounded-lg border border-gray-300 text-sm focus:ring-2 focus:ring-bhutan-burgundy focus:outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-700 mb-1">Password</label>
+                    <input type="password" id="loginPassword" required placeholder="••••••••" class="w-full px-3.5 py-2.5 rounded-lg border border-gray-300 text-sm focus:ring-2 focus:ring-bhutan-burgundy focus:outline-none">
+                </div>
+                <button type="submit" class="w-full bg-bhutan-burgundy hover:bg-bhutan-maroon text-white font-bold py-3 rounded-lg text-sm shadow transition">
+                    Login to Student Portal
+                </button>
+            </form>
+
+            <form id="formRegister" onsubmit="handleRegisterSubmit(event)" class="space-y-4 hidden">
+                <div>
+                    <label class="block text-xs font-bold text-gray-700 mb-1">Full Student Name *</label>
+                    <input type="text" id="regName" required placeholder="e.g., Sangay Khandu" class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm focus:ring-2 focus:ring-bhutan-burgundy focus:outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-700 mb-1">Student ID / Grade *</label>
+                    <input type="text" id="regCode" required placeholder="e.g., BCS-10B-005" class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm focus:ring-2 focus:ring-bhutan-burgundy focus:outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-700 mb-1">School Name *</label>
+                    <select id="regSchool" required class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm focus:ring-2 focus:ring-bhutan-burgundy focus:outline-none bg-white font-bold text-bhutan-maroon">
+                        <option value="Bjishong Central School, Gasa" selected>Bjishong Central School (Bjishong CS), Gasa</option>
+                        <option value="Motithang Higher Secondary School">Motithang Higher Secondary School</option>
+                        <option value="Yangchenphug HSS">Yangchenphug HSS</option>
+                        <option value="Drugyel Higher Secondary School">Drugyel HSS</option>
+                        <option value="Punakha Higher Secondary School">Punakha HSS</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-700 mb-1">Password *</label>
+                    <input type="password" id="regPassword" required placeholder="Create password" class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm focus:ring-2 focus:ring-bhutan-burgundy focus:outline-none">
+                </div>
+                <button type="submit" class="w-full bg-gradient-to-r from-bhutan-gold to-bhutan-orange text-bhutan-dark font-extrabold py-3 rounded-lg text-sm shadow transition">
+                    Complete Registration
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <div id="successModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-md w-full p-6 text-center shadow-2xl border border-amber-200">
+            <div class="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center text-3xl mx-auto mb-4">
+                <i class="fa-solid fa-cloud-arrow-up"></i>
+            </div>
+            <h3 class="text-2xl font-extrabold text-bhutan-maroon">Complaint Dispatched</h3>
+            <p class="text-xs text-gray-600 mt-2">
+                Your report has been securely transmitted & routed to the Principal's desk.
+            </p>
+
+            <div class="bg-amber-50 p-4 rounded-xl my-4 border border-amber-200">
+                <span class="text-xs text-gray-500 uppercase block font-bold">Official Reference ID</span>
+                <span id="modalRefId" class="text-xl font-mono font-bold text-bhutan-burgundy select-all">BT-SAFE-2026-X9Y2</span>
+            </div>
+
+            <button onclick="closeSuccessModal()" class="w-full bg-bhutan-burgundy hover:bg-bhutan-maroon text-white font-bold py-3 rounded-xl text-sm transition">
+                Return to Dashboard
+            </button>
+        </div>
+    </div>
+
+    <div id="detailModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-amber-200 relative max-h-[90vh] overflow-y-auto custom-scrollbar">
+            <button onclick="closeDetailModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 text-lg">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <div id="detailModalBody" class="space-y-4">
+                <!-- Dynamic Content via JS -->
+            </div>
+        </div>
+    </div>
+
+    <div id="cyberSafetyModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-white rounded-2xl max-w-3xl w-full p-6 sm:p-8 shadow-2xl border border-amber-200 relative my-8 max-h-[90vh] overflow-y-auto custom-scrollbar">
+            <button onclick="closeCyberSafetyModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 text-xl w-8 h-8 flex items-center justify-center rounded-full bg-gray-100">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+            <div class="flex items-center gap-3 border-b border-amber-100 pb-4 mb-6">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-bhutan-burgundy to-bhutan-maroon text-white flex items-center justify-center text-2xl shadow-md">
+                    <i class="fa-solid fa-shield-halved"></i>
+                </div>
+                <div>
+                    <span class="text-xs font-bold text-bhutan-orange uppercase tracking-wider">Sherig Digital Safety</span>
+                    <h3 class="text-2xl font-black text-bhutan-maroon">Cyberbullying Precautions by App</h3>
+                    <p class="text-xs text-gray-600">Essential guidelines and safety measures for popular social media apps in Bhutan.</p>
+                </div>
+            </div>
+
+            <div class="bg-amber-50 rounded-xl p-4 border border-amber-200 mb-6">
+                <h4 class="text-sm font-bold text-bhutan-maroon flex items-center gap-2 mb-2">
+                    <i class="fa-solid fa-triangle-exclamation text-bhutan-orange"></i> Golden Rules for Cyber Safety
+                </h4>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs text-gray-700">
+                    <div class="bg-white p-3 rounded-lg border border-amber-200/60">
+                        <strong class="block text-bhutan-burgundy mb-1"><i class="fa-solid fa-camera mr-1"></i> 1. Preserve Evidence</strong>
+                        Take clear screenshots showing date, time, username, and message before deleting any chats.
+                    </div>
+                    <div class="bg-white p-3 rounded-lg border border-amber-200/60">
+                        <strong class="block text-bhutan-burgundy mb-1"><i class="fa-solid fa-ban mr-1"></i> 2. Do Not Retaliate</strong>
+                        Do not reply with abusive words. Block the user immediately to prevent further harm.
+                    </div>
+                    <div class="bg-white p-3 rounded-lg border border-amber-200/60">
+                        <strong class="block text-bhutan-burgundy mb-1"><i class="fa-solid fa-paper-plane mr-1"></i> 3. Report Directly</strong>
+                        Submit the report through this portal directly to your School Principal or Counselor.
+                    </div>
+                </div>
+            </div>
+
+            <div class="space-y-4">
+                <h4 class="text-sm font-extrabold text-bhutan-maroon uppercase tracking-wider">Platform-Specific Safety Instructions</h4>
+
+                <div class="bg-white border border-gray-200 rounded-xl p-4 hover:border-green-400 transition">
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="flex items-center gap-2">
+                            <i class="fa-brands fa-weixin text-2xl text-green-600"></i>
+                            <h5 class="font-bold text-gray-900 text-sm">WeChat (Class & Hostel Groups)</h5>
+                        </div>
+                        <span class="text-[10px] font-bold bg-green-100 text-green-800 px-2 py-0.5 rounded-full">High Student Usage</span>
+                    </div>
+                    <ul class="text-xs text-gray-600 space-y-1.5 list-disc list-inside">
+                        <li><strong>Group Admin Reporting:</strong> Request class teacher/group admin to remove bullies from group chats.</li>
+                        <li><strong>Privacy Settings:</strong> Go to <em>Me > Settings > Privacy</em> and disable <em>"Add Me by Group"</em>.</li>
+                        <li><strong>Evidence Collection:</strong> Long-press abusive text messages or voice notes, tap <em>"Save"</em> or screenshot chat logs.</li>
+                    </ul>
+                </div>
+
+                <div class="bg-white border border-gray-200 rounded-xl p-4 hover:border-blue-400 transition">
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="flex items-center gap-2">
+                            <i class="fa-brands fa-facebook text-2xl text-blue-600"></i>
+                            <h5 class="font-bold text-gray-900 text-sm">Facebook & Messenger</h5>
+                        </div>
+                        <span class="text-[10px] font-bold bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full">Fake Profiles & Rumors</span>
+                    </div>
+                    <ul class="text-xs text-gray-600 space-y-1.5 list-disc list-inside">
+                        <li><strong>Fake Account Reporting:</strong> Click three dots `...` on offender profile > Select <em>"Find Support or Report Profile"</em>.</li>
+                        <li><strong>Lock Profile:</strong> Enable <em>"Profile Lock"</em> so strangers cannot download or screenshot your photos.</li>
+                        <li><strong>Restrict Messages:</strong> Use Messenger's <em>"Restrict"</em> feature to silence messages without notifying offender.</li>
+                    </ul>
+                </div>
+
+                <div class="bg-white border border-gray-200 rounded-xl p-4 hover:border-black transition">
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="flex items-center gap-2">
+                            <i class="fa-brands fa-tiktok text-2xl text-black"></i>
+                            <h5 class="font-bold text-gray-900 text-sm">TikTok (Video Harassment)</h5>
+                        </div>
+                        <span class="text-[10px] font-bold bg-gray-100 text-gray-800 px-2 py-0.5 rounded-full">Bullying & Mockery Videos</span>
+                    </div>
+                    <ul class="text-xs text-gray-600 space-y-1.5 list-disc list-inside">
+                        <li><strong>Report Video:</strong> Tap the <em>Share Arrow > Report > Harassment or Bullying</em>.</li>
+                        <li><strong>Comment Filters:</strong> In <em>Settings > Privacy > Comments</em>, enable <em>"Filter All Comments"</em>.</li>
+                        <li><strong>Private Account:</strong> Set TikTok account to <em>Private</em> so only approved classmates view videos.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="mt-6 pt-4 border-t border-gray-100 flex flex-col sm:flex-row justify-between items-center gap-3">
+                <button onclick="closeCyberSafetyModal()" class="w-full sm:w-auto px-5 py-2.5 rounded-xl border border-gray-300 text-gray-700 font-bold text-xs hover:bg-gray-50 transition">
+                    Close Guide
+                </button>
+                <button onclick="closeCyberSafetyModal(); switchTab('report');" class="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-gradient-to-r from-bhutan-burgundy to-bhutan-maroon text-white font-extrabold text-xs shadow hover:opacity-95 transition flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-paper-plane"></i> Report Cyberbullying Incident Now
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <footer class="bg-bhutan-dark text-white border-t border-amber-900/30 py-10 mt-12">
+        <div class="max-w-7xl mx-auto px-4 text-center space-y-4">
+            <div class="flex flex-col sm:flex-row justify-center items-center gap-2 text-amber-100">
+                <div class="w-7 h-7 rounded-md bg-bhutan-gold flex items-center justify-center text-xs text-bhutan-dark font-extrabold shadow">⚡</div>
+                <span class="font-extrabold text-base tracking-wide text-white">Sherig Safety Network</span>
+                <span class="hidden sm:inline text-amber-400">•</span>
+                <span class="text-xs text-amber-200 font-semibold">Ministry of Education & Skills Development</span>
+            </div>
+
+            <!-- Gross National Happiness (GNH) Pillar Badge -->
+            <div class="bg-white/5 border border-amber-500/20 rounded-xl p-4 max-w-2xl mx-auto backdrop-blur-sm">
+                <span class="inline-flex items-center gap-1.5 text-xs font-bold text-bhutan-gold uppercase tracking-wider mb-1">
+                    <i class="fa-solid fa-dharmachakra"></i> Gross National Happiness (GNH) Pillar
+                </span>
+                <p class="text-xs text-amber-100/80 leading-relaxed">
+                    Guided by the principles of Gross National Happiness (GNH) to foster safe, inclusive, and harmonious learning environments across all 20 Dzongkhags, including Bjishong Central School in Gasa.
+                </p>
+            </div>
+
+            <!-- Ministry Physical Address -->
+            <div class="text-xs text-amber-200/70 space-y-1">
+                <p class="font-medium">
+                    <i class="fa-solid fa-location-dot text-bhutan-orange mr-1.5"></i>
+                    Ministry of Education & Skills Development, Kawajangsa, Thimphu, Kingdom of Bhutan
+                </p>
+                <p class="text-[11px] text-amber-200/50">
+                    P.O. Box 112 | Emergency Hotlines: Childline 1098 / Health 112 | Email: support@education.gov.bt
+                </p>
+            </div>
+
+            <div class="pt-3 border-t border-white/10 text-[11px] text-amber-200/50 flex flex-col sm:flex-row items-center justify-center gap-2">
+                <span>© 2026 Royal Government of Bhutan — Ministry of Education & Skills Development.</span>
+                <span class="font-semibold text-amber-300">All Rights Reserved.</span>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        const STORAGE_KEY_COMPLAINTS = 'sherig_complaints_v1';
+        const STORAGE_KEY_USER = 'sherig_current_user_v1';
+        const STORAGE_KEY_PRINCIPAL_LOGGED = 'sherig_principal_auth_v1';
+
+        // Pre-populated default complaints for Bjishong CS & Bhutanese schools if empty
+        const SAMPLE_COMPLAINTS = [
+            {
+                id: 'BT-SAFE-2026-G82A',
+                studentName: 'Anonymous Student',
+                studentCode: 'HIDDEN',
+                school: 'Bjishong Central School, Gasa',
+                category: 'Cyberbullying',
+                severity: 'High',
+                recipient: 'School Principal',
+                date: '2026-09-22',
+                description: 'Inappropriate fake account on WeChat spreading hurtful rumors in the Class 9 student group.',
+                evidence: 'Chat screenshots saved on phone',
+                status: 'Under Investigation',
+                submittedAt: new Date(Date.now() - 86400000 * 2).toISOString()
+            },
+            {
+                id: 'BT-SAFE-2026-K491',
+                studentName: 'Kinley Zangmo',
+                studentCode: 'BCS-10B-014',
+                school: 'Bjishong Central School, Gasa',
+                category: 'Physical Bullying',
+                severity: 'Medium',
+                recipient: 'School Counselor',
+                date: '2026-09-25',
+                description: 'Pushing and taking lunch snacks near the hostel mess courtyard after morning assembly.',
+                evidence: 'Witnessed by hostel warden',
+                status: 'Pending',
+                submittedAt: new Date(Date.now() - 3600000 * 12).toISOString()
+            },
+            {
+                id: 'BT-SAFE-2026-P012',
+                studentName: 'Tashi Namgyal',
+                studentCode: 'MHSS-12A-003',
+                school: 'Motithang Higher Secondary School',
+                category: 'Verbal Bullying',
+                severity: 'Low',
+                recipient: 'School Principal',
+                date: '2026-09-18',
+                description: 'Repeated offensive nicknames during sports practice.',
+                evidence: 'None',
+                status: 'Resolved',
+                submittedAt: new Date(Date.now() - 86400000 * 7).toISOString()
+            }
+        ];
+
+        window.addEventListener('DOMContentLoaded', () => {
+            // Set default date picker to today
+            const dateInput = document.getElementById('reportDate');
+            if (dateInput) {
+                dateInput.value = new Date().toISOString().split('T')[0];
+            }
+
+            // Seed mock data if not existing
+            if (!localStorage.getItem(STORAGE_KEY_COMPLAINTS)) {
+                localStorage.setItem(STORAGE_KEY_COMPLAINTS, JSON.stringify(SAMPLE_COMPLAINTS));
+            }
+
+            // Initialize UI state
+            updateUserUI();
+            renderStudentTracker();
+            
+            // Check Principal auth session
+            if (localStorage.getItem(STORAGE_KEY_PRINCIPAL_LOGGED) === 'true') {
+                document.getElementById('principalLockScreen').classList.add('hidden');
+                document.getElementById('principalContentArea').classList.remove('hidden');
+                renderAdminInbox();
+            }
+        });
+
+        function switchTab(tabId) {
+            const views = ['dashboard', 'report', 'awareness', 'admin'];
+            views.forEach(v => {
+                const el = document.getElementById(`view-${v}`);
+                if (el) el.classList.add('hidden');
+
+                // Desktop Nav styles
+                const navBtn = document.getElementById(`nav-${v}`);
+                if (navBtn) {
+                    if (v === tabId) {
+                        navBtn.className = 'nav-btn px-4 py-2 rounded-lg text-sm font-bold transition-all text-bhutan-maroon bg-amber-100 shadow-sm';
+                    } else {
+                        navBtn.className = 'nav-btn px-4 py-2 rounded-lg text-sm font-medium transition-all text-bhutan-burgundy hover:bg-amber-50';
+                    }
+                }
+
+                // Mobile Nav styles
+                const mobBtn = document.getElementById(`mobile-nav-${v}`);
+                if (mobBtn) {
+                    if (v === tabId) {
+                        mobBtn.className = 'flex flex-col items-center font-bold text-bhutan-orange bg-amber-200/50 py-1 px-3 rounded-lg transition-all';
+                    } else {
+                        mobBtn.className = 'flex flex-col items-center text-bhutan-burgundy py-1 px-3 rounded-lg transition-all';
+                    }
+                }
+            });
+
+            const activeView = document.getElementById(`view-${tabId}`);
+            if (activeView) activeView.classList.remove('hidden');
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+
+            if (tabId === 'dashboard') {
+                renderStudentTracker();
+            } else if (tabId === 'admin' && localStorage.getItem(STORAGE_KEY_PRINCIPAL_LOGGED) === 'true') {
+                renderAdminInbox();
+            }
+        }
+
+        function toggleAnonymousMode(checkbox) {
+            const detailFields = document.getElementById('studentDetailFields');
+            const nameInput = document.getElementById('reportStudentName');
+            const codeInput = document.getElementById('reportStudentCode');
+
+            if (checkbox.checked) {
+                detailFields.classList.add('opacity-50', 'pointer-events-none');
+                nameInput.removeAttribute('required');
+                codeInput.removeAttribute('required');
+                nameInput.value = 'Anonymous Student';
+                codeInput.value = 'CONFIDENTIAL';
+            } else {
+                detailFields.classList.remove('opacity-50', 'pointer-events-none');
+                nameInput.setAttribute('required', 'true');
+                codeInput.setAttribute('required', 'true');
+                
+                // Autofill if logged in
+                const userObj = JSON.parse(localStorage.getItem(STORAGE_KEY_USER) || 'null');
+                if (userObj) {
+                    nameInput.value = userObj.name || '';
+                    codeInput.value = userObj.code || '';
+                } else {
+                    nameInput.value = '';
+                    codeInput.value = '';
+                }
+            }
+        }
+
+        function handleComplaintSubmit(event) {
+            event.preventDefault();
+
+            const isAnon = document.getElementById('isAnonymous').checked;
+            const studentName = isAnon ? 'Anonymous Student' : document.getElementById('reportStudentName').value.trim();
+            const studentCode = isAnon ? 'CONFIDENTIAL' : document.getElementById('reportStudentCode').value.trim();
+            const school = document.getElementById('reportSchool').value;
+            const category = document.getElementById('reportCategory').value;
+            const severity = document.getElementById('reportSeverity').value;
+            const recipient = document.querySelector('input[name="recipient"]:checked').value;
+            const date = document.getElementById('reportDate').value;
+            const description = document.getElementById('reportDescription').value.trim();
+            const evidence = document.getElementById('reportEvidence').value.trim() || 'None provided';
+
+            // Generate unique Bhutan Safe Reference Code
+            const randomCode = Math.random().toString(36).substring(2, 6).toUpperCase();
+            const refId = `BT-SAFE-2026-${randomCode}`;
+
+            const newComplaint = {
+                id: refId,
+                studentName,
+                studentCode,
+                school,
+                category,
+                severity,
+                recipient,
+                date,
+                description,
+                evidence,
+                status: 'Pending',
+                submittedAt: new Date().toISOString()
+            };
+
+            // Save to localStorage
+            const existing = JSON.parse(localStorage.getItem(STORAGE_KEY_COMPLAINTS) || '[]');
+            existing.unshift(newComplaint);
+            localStorage.setItem(STORAGE_KEY_COMPLAINTS, JSON.stringify(existing));
+
+            // Show Success Modal with Generated Code
+            document.getElementById('modalRefId').innerText = refId;
+            document.getElementById('successModal').classList.remove('hidden');
+
+            // Reset Form
+            document.getElementById('complaintForm').reset();
+            document.getElementById('isAnonymous').checked = false;
+            toggleAnonymousMode(document.getElementById('isAnonymous'));
+            renderStudentTracker();
+        }
+
+        function closeSuccessModal() {
+            document.getElementById('successModal').classList.add('hidden');
+            switchTab('dashboard');
+        }
+
+        function renderStudentTracker() {
+            const trackerContainer = document.getElementById('studentTrackList');
+            if (!trackerContainer) return;
+
+            const list = JSON.parse(localStorage.getItem(STORAGE_KEY_COMPLAINTS) || '[]');
+
+            if (list.length === 0) {
+                trackerContainer.innerHTML = `
+                    <div class="text-center py-8 text-gray-400">
+                        <i class="fa-solid fa-folder-open text-3xl mb-2"></i>
+                        <p class="text-xs font-semibold">No complaints recorded yet.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            trackerContainer.innerHTML = list.map(item => {
+                let statusBg = 'bg-yellow-100 text-yellow-800 border-yellow-300';
+                if (item.status === 'Under Investigation') statusBg = 'bg-blue-100 text-blue-800 border-blue-300';
+                if (item.status === 'Resolved') statusBg = 'bg-green-100 text-green-800 border-green-300';
+
+                let sevBg = 'bg-gray-100 text-gray-700';
+                if (item.severity === 'High' || item.severity === 'URGENT') sevBg = 'bg-red-100 text-red-700 font-bold';
+
+                return `
+                    <div class="bg-gray-50 hover:bg-amber-50/50 p-4 rounded-xl border border-gray-200 transition flex flex-col sm:flex-row justify-between sm:items-center gap-3">
+                        <div>
+                            <div class="flex items-center gap-2 mb-1">
+                                <span class="font-mono font-bold text-xs text-bhutan-burgundy bg-amber-100/80 px-2 py-0.5 rounded border border-amber-300">${item.id}</span>
+                                <span class="text-[11px] font-bold px-2 py-0.5 rounded-full border ${statusBg}">${item.status}</span>
+                                <span class="text-[10px] px-2 py-0.5 rounded ${sevBg}">${item.severity} Urgency</span>
+                            </div>
+                            <h4 class="font-bold text-sm text-bhutan-maroon">${item.category} — <span class="text-xs font-normal text-gray-600">${item.school}</span></h4>
+                            <p class="text-xs text-gray-600 line-clamp-1 mt-0.5">${item.description}</p>
+                        </div>
+                        <div class="flex items-center justify-between sm:justify-end gap-3 text-xs border-t sm:border-t-0 pt-2 sm:pt-0 border-gray-200">
+                            <span class="text-gray-400 text-[11px]"><i class="fa-regular fa-calendar mr-1"></i>${item.date}</span>
+                            <button onclick="viewDetails('${item.id}')" class="bg-white border border-gray-300 hover:border-bhutan-burgundy text-bhutan-burgundy font-bold px-3 py-1.5 rounded-lg transition text-xs shadow-sm">
+                                View Details
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function unlockPrincipalPortal(event) {
+            event.preventDefault();
+            const pinInput = document.getElementById('principalPinInput').value.trim();
+            const errorEl = document.getElementById('pinError');
+
+            if (pinInput === '1234') {
+                errorEl.classList.add('hidden');
+                localStorage.setItem(STORAGE_KEY_PRINCIPAL_LOGGED, 'true');
+                document.getElementById('principalLockScreen').classList.add('hidden');
+                document.getElementById('principalContentArea').classList.remove('hidden');
+                renderAdminInbox();
+            } else {
+                errorEl.classList.remove('hidden');
+            }
+        }
+
+        function lockPrincipalPortal() {
+            localStorage.removeItem(STORAGE_KEY_PRINCIPAL_LOGGED);
+            document.getElementById('principalContentArea').classList.add('hidden');
+            document.getElementById('principalLockScreen').classList.remove('hidden');
+            document.getElementById('principalPinInput').value = '';
+        }
+
+        function renderAdminInbox() {
+            const tableBody = document.getElementById('adminTableBody');
+            if (!tableBody) return;
+
+            const filter = document.getElementById('adminFilter').value;
+            let list = JSON.parse(localStorage.getItem(STORAGE_KEY_COMPLAINTS) || '[]');
+
+            if (filter !== 'ALL') {
+                list = list.filter(item => item.status === filter);
+            }
+
+            if (list.length === 0) {
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="7" class="text-center py-8 text-gray-400 font-normal">
+                            No complaints match the selected status filter.
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tableBody.innerHTML = list.map(item => {
+                let statusColor = 'bg-yellow-100 text-yellow-800';
+                if (item.status === 'Under Investigation') statusColor = 'bg-blue-100 text-blue-800';
+                if (item.status === 'Resolved') statusColor = 'bg-green-100 text-green-800';
+
+                return `
+                    <tr class="hover:bg-amber-50/40 transition">
+                        <td class="p-3 font-mono font-bold text-bhutan-burgundy">${item.id}</td>
+                        <td class="p-3">
+                            <span class="font-bold text-gray-800 block">${item.studentName}</span>
+                            <span class="text-[10px] text-gray-400 font-mono">${item.studentCode}</span>
+                        </td>
+                        <td class="p-3 text-gray-700">${item.school}</td>
+                        <td class="p-3 font-semibold text-bhutan-maroon">${item.category}</td>
+                        <td class="p-3">
+                            <span class="px-2 py-0.5 rounded text-[10px] font-bold ${item.severity.includes('High') || item.severity.includes('URGENT') ? 'bg-red-100 text-red-700' : 'bg-gray-100 text-gray-700'}">${item.severity}</span>
+                        </td>
+                        <td class="p-3">
+                            <span class="px-2.5 py-1 rounded-full text-[10px] font-bold ${statusColor}">${item.status}</span>
+                        </td>
+                        <td class="p-3 text-right space-x-1">
+                            <button onclick="viewDetails('${item.id}')" class="bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold px-2.5 py-1.5 rounded transition text-[11px]">
+                                Inspect
+                            </button>
+                            <select onchange="updateComplaintStatus('${item.id}', this.value)" class="bg-white border border-gray-300 text-gray-700 font-bold px-2 py-1 rounded text-[11px] focus:outline-none">
+                                <option value="Pending" ${item.status === 'Pending' ? 'selected' : ''}>Pending</option>
+                                <option value="Under Investigation" ${item.status === 'Under Investigation' ? 'selected' : ''}>Investigate</option>
+                                <option value="Resolved" ${item.status === 'Resolved' ? 'selected' : ''}>Resolve</option>
+                            </select>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function updateComplaintStatus(id, newStatus) {
+            let list = JSON.parse(localStorage.getItem(STORAGE_KEY_COMPLAINTS) || '[]');
+            list = list.map(item => item.id === id ? { ...item, status: newStatus } : item);
+            localStorage.setItem(STORAGE_KEY_COMPLAINTS, JSON.stringify(list));
+            renderAdminInbox();
+            renderStudentTracker();
+        }
+
+        function viewDetails(id) {
+            const list = JSON.parse(localStorage.getItem(STORAGE_KEY_COMPLAINTS) || '[]');
+            const item = list.find(x => x.id === id);
+            if (!item) return;
+
+            const modalBody = document.getElementById('detailModalBody');
+            modalBody.innerHTML = `
+                <div class="border-b border-gray-200 pb-3">
+                    <span class="text-[10px] font-bold bg-amber-100 text-bhutan-burgundy px-2 py-0.5 rounded uppercase">Complaint Record</span>
+                    <h3 class="text-xl font-extrabold text-bhutan-maroon mt-1">${item.id}</h3>
+                    <p class="text-xs text-gray-500">${item.school}</p>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3 text-xs">
+                    <div class="bg-gray-50 p-2.5 rounded-lg border border-gray-200">
+                        <span class="text-gray-400 block font-bold text-[10px]">STUDENT NAME</span>
+                        <span class="font-bold text-gray-800">${item.studentName}</span>
+                    </div>
+                    <div class="bg-gray-50 p-2.5 rounded-lg border border-gray-200">
+                        <span class="text-gray-400 block font-bold text-[10px]">STUDENT ID</span>
+                        <span class="font-mono font-bold text-gray-800">${item.studentCode}</span>
+                    </div>
+                    <div class="bg-gray-50 p-2.5 rounded-lg border border-gray-200">
+                        <span class="text-gray-400 block font-bold text-[10px]">CATEGORY</span>
+                        <span class="font-bold text-bhutan-burgundy">${item.category}</span>
+                    </div>
+                    <div class="bg-gray-50 p-2.5 rounded-lg border border-gray-200">
+                        <span class="text-gray-400 block font-bold text-[10px]">URGENCY LEVEL</span>
+                        <span class="font-bold text-red-600">${item.severity}</span>
+                    </div>
+                </div>
+
+                <div class="text-xs">
+                    <span class="text-gray-400 block font-bold text-[10px] mb-1">INCIDENT DESCRIPTION</span>
+                    <div class="bg-amber-50/60 p-3 rounded-lg border border-amber-200 text-gray-800 leading-relaxed font-normal">
+                        ${item.description}
+                    </div>
+                </div>
+
+                <div class="text-xs">
+                    <span class="text-gray-400 block font-bold text-[10px] mb-1">EVIDENCE / NOTES</span>
+                    <p class="text-gray-700 italic bg-gray-50 p-2 rounded border border-gray-200">${item.evidence}</p>
+                </div>
+
+                <div class="pt-2 flex justify-end">
+                    <button onclick="closeDetailModal()" class="bg-bhutan-burgundy text-white font-bold px-5 py-2 rounded-xl text-xs">
+                        Close Window
+                    </button>
+                </div>
+            `;
+
+            document.getElementById('detailModal').classList.remove('hidden');
+        }
+
+        function closeDetailModal() {
+            document.getElementById('detailModal').classList.add('hidden');
+        }
+
+        function openAuthModal() {
+            document.getElementById('authModal').classList.remove('hidden');
+        }
+
+        function closeAuthModal() {
+            document.getElementById('authModal').classList.add('hidden');
+        }
+
+        function switchAuthTab(type) {
+            const loginForm = document.getElementById('formLogin');
+            const regForm = document.getElementById('formRegister');
+            const btnLogin = document.getElementById('tabBtnLogin');
+            const btnReg = document.getElementById('tabBtnRegister');
+
+            if (type === 'login') {
+                loginForm.classList.remove('hidden');
+                regForm.classList.add('hidden');
+                btnLogin.className = 'w-1/2 text-center pb-2 font-bold text-sm text-bhutan-burgundy border-b-2 border-bhutan-burgundy';
+                btnReg.className = 'w-1/2 text-center pb-2 font-bold text-sm text-gray-400 border-b-2 border-transparent';
+            } else {
+                loginForm.classList.add('hidden');
+                regForm.classList.remove('hidden');
+                btnReg.className = 'w-1/2 text-center pb-2 font-bold text-sm text-bhutan-burgundy border-b-2 border-bhutan-burgundy';
+                btnLogin.className = 'w-1/2 text-center pb-2 font-bold text-sm text-gray-400 border-b-2 border-transparent';
+            }
+        }
+
+        function handleLoginSubmit(event) {
+            event.preventDefault();
+            const id = document.getElementById('loginId').value.trim();
+            const userObj = { name: id.split('@')[0] || 'Student', code: id };
+            localStorage.setItem(STORAGE_KEY_USER, JSON.stringify(userObj));
+            updateUserUI();
+            closeAuthModal();
+        }
+
+        function handleRegisterSubmit(event) {
+            event.preventDefault();
+            const name = document.getElementById('regName').value.trim();
+            const code = document.getElementById('regCode').value.trim();
+            const school = document.getElementById('regSchool').value;
+            const userObj = { name, code, school };
+            localStorage.setItem(STORAGE_KEY_USER, JSON.stringify(userObj));
+            updateUserUI();
+            closeAuthModal();
+        }
+
+        function logoutUser() {
+            localStorage.removeItem(STORAGE_KEY_USER);
+            updateUserUI();
+        }
+
+        function updateUserUI() {
+            const userObj = JSON.parse(localStorage.getItem(STORAGE_KEY_USER) || 'null');
+            const statusArea = document.getElementById('userStatusArea');
+            const userDisplay = document.getElementById('currentUserDisplay');
+            const authBtn = document.getElementById('authBtn');
+
+            if (userObj) {
+                if (statusArea) {
+                    statusArea.classList.remove('hidden');
+                    statusArea.classList.add('flex');
+                }
+                if (userDisplay) userDisplay.innerText = userObj.name;
+                if (authBtn) authBtn.classList.add('hidden');
+
+                // Autofill form if available
+                const nameInput = document.getElementById('reportStudentName');
+                const codeInput = document.getElementById('reportStudentCode');
+                const schoolSelect = document.getElementById('reportSchool');
+                if (nameInput) nameInput.value = userObj.name || '';
+                if (codeInput) codeInput.value = userObj.code || '';
+                if (schoolSelect && userObj.school) schoolSelect.value = userObj.school;
+            } else {
+                if (statusArea) {
+                    statusArea.classList.add('hidden');
+                    statusArea.classList.remove('flex');
+                }
+                if (authBtn) authBtn.classList.remove('hidden');
+            }
+        }
+
+        function openCyberSafetyModal() {
+            document.getElementById('cyberSafetyModal').classList.remove('hidden');
+        }
+
+        function closeCyberSafetyModal() {
+            document.getElementById('cyberSafetyModal').classList.add('hidden');
+        }
+    </script>
+</body>
+</html>
